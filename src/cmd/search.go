@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/jcreach/Leon/model"
+	"github.com/jcreach/Leon/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -36,6 +37,7 @@ func init() {
 }
 
 func searchPackages(cmd *cobra.Command, args []string) {
+	util.CheckConfig()
 	basicToken := viper.GetString("basictoken")
 	baseAddress := viper.GetString("baseaddress")
 	repositoryName := viper.GetString("repository")
