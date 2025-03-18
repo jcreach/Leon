@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/jcreach/Leon/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -35,6 +36,8 @@ func init() {
 }
 
 func deletePackage(cmd *cobra.Command, args []string) {
+	util.CheckConfig()
+
 	basicToken := viper.GetString("basictoken")
 	baseAddress := viper.GetString("baseaddress")
 

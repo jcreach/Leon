@@ -60,7 +60,6 @@ func createMissingConfigFile(fileName string) {
 			fmt.Println("Erreur lors de la création du dossier :", err)
 			return
 		}
-		fmt.Println("Dossier créé avec succès.")
 	}
 
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
@@ -71,6 +70,5 @@ func createMissingConfigFile(fileName string) {
 			return
 		}
 		defer file.Close()
-		fmt.Println("Fichier créé avec succès.")
 	}
 }
