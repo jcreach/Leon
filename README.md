@@ -8,5 +8,5 @@ Leon is a cli tool to manage your nexus instance
 ### go install
 
 ```
-go github.com/jcreach/Leon
+go install github.com/jcreach/Leon@latest
 ```
