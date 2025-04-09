@@ -4,6 +4,7 @@ Copyright © 2025 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -14,15 +15,9 @@ import (
 // useCmd represents the use command
 var useCmd = &cobra.Command{
 	Use:   "use",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Args: cobra.ExactArgs(1),
-	Run:  SelectActiveRepository,
+	Short: "Select the active repository",
+	Args:  cobra.ExactArgs(1),
+	Run:   SelectActiveRepository,
 }
 
 func init() {
@@ -41,9 +36,9 @@ func init() {
 
 func SelectActiveRepository(cmd *cobra.Command, args []string) {
 	if !util.SetActiveRepository(args[0]) {
-		log.Fatalln("Wrong repository name")
+		log.Fatalln("Repository doesn't exist! Please use login command before ...")
 		os.Exit(1)
 	}
 
-	log.Println(args[0], "is now the active repository")
+	fmt.Println(args[0], "is now the active repository 🪴")
 }
