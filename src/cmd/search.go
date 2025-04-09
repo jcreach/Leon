@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 Julien Creach julien.creach@pm.me
+Copyright © 2025 Julien Creach github.com/jcreach
 */
 package cmd
 
@@ -7,12 +7,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/jcreach/Leon/model"
 	"github.com/jcreach/Leon/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // searchCmd represents the search command
@@ -38,9 +38,10 @@ func init() {
 
 func searchPackages(cmd *cobra.Command, args []string) {
 	util.CheckConfig()
-	basicToken := viper.GetString("basictoken")
-	baseAddress := viper.GetString("baseaddress")
-	repositoryName := viper.GetString("repository")
+
+	basicToken := util.ActiveRepository.BasicToken
+	baseAddress := util.ActiveRepository.BaseAddress
+	repositoryName := util.ActiveRepository.Name
 
 	nameTofind, _ := cmd.Flags().GetString("name")
 
@@ -48,7 +49,7 @@ func searchPackages(cmd *cobra.Command, args []string) {
 
 	req, err := http.NewRequest("GET", searchUrl, nil)
 	if err != nil {
-		fmt.Println("Erreur lors de la création de la requête:", err)
+		log.Fatalln("Error during query creation:", err)
 		return
 	}
 
@@ -56,7 +57,7 @@ func searchPackages(cmd *cobra.Command, args []string) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Erreur lors de l'exécution de la requête:", err)
+		log.Fatalln("Error during query execution:", err)
 		return
 	}
 	defer resp.Body.Close()
@@ -66,14 +67,14 @@ func searchPackages(cmd *cobra.Command, args []string) {
 		{
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				fmt.Println("Erreur lors de la lecture de la réponse:", err)
+				log.Fatalln("Error when reading the query answer:", err)
 				return
 			}
 
 			var response model.NexusPackageResponse
 			errjson := json.Unmarshal([]byte(string(body)), &response)
 			if errjson != nil {
-				fmt.Println("Erreur lors de la désérialisation du JSON : %v", errjson)
+				log.Fatalf("Error when deserializing JSON: %v", errjson)
 			}
 
 			if len(response.Items) > 0 {
