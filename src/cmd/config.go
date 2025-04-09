@@ -1,13 +1,11 @@
 /*
-Copyright © 2025 Julien Creach julien.creach@pm.me
+Copyright © 2025 Julien Creach github.com/jcreach
 */
 package cmd
 
 import (
-	"fmt"
-
+	"github.com/jcreach/Leon/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // configCmd represents the config command
@@ -33,15 +31,5 @@ func init() {
 
 func ShowConfiguration(cmd *cobra.Command, args []string) {
 	// Lire toutes les configurations
-	configs := viper.AllSettings()
-
-	if len(configs) > 0 {
-		// Afficher toutes les configurations
-		for key, value := range configs {
-			fmt.Printf("Key: %s, Value: %v\n", key, value)
-		}
-	} else {
-		fmt.Println("Nexcln, no configuration ...")
-	}
-
+	util.ShowLoggedInRepositories()
 }

@@ -1,5 +1,5 @@
 /*
-Copyright © 2025 Julien Creach julien.creach@pm.me
+Copyright © 2025 Julien Creach github.com/jcreach
 */
 package model
 

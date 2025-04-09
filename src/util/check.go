@@ -1,15 +1,18 @@
+/*
+Copyright © 2025 Julien Creach github.com/jcreach
+*/
 package util
 
 import (
-	"fmt"
+	"log"
 	"os"
 
 	"github.com/spf13/viper"
 )
 
 func CheckConfig() {
-	if !viper.IsSet("basictoken") || !viper.IsSet("baseaddress") || !viper.IsSet("repository") {
-		fmt.Println("Veuillez éxecuter la commande login avant de pouvoir continuer")
+	if !viper.IsSet("repositories") || !AnyActiveRepository() {
+		log.Fatalln("Please execute the login command before continuing..")
 		os.Exit(1)
 	}
 }

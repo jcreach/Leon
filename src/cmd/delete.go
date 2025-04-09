@@ -1,15 +1,14 @@
 /*
-Copyright © 2025 Julien Creach julien.creach@pm.me
+Copyright © 2025 Julien Creach github.com/jcreach
 */
 package cmd
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/jcreach/Leon/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // deleteCmd represents the delete command
@@ -38,28 +37,28 @@ func init() {
 func deletePackage(cmd *cobra.Command, args []string) {
 	util.CheckConfig()
 
-	basicToken := viper.GetString("basictoken")
-	baseAddress := viper.GetString("baseaddress")
+	basicToken := util.ActiveRepository.BasicToken
+	baseAddress := util.ActiveRepository.BaseAddress
 
 	idToDelete, _ := cmd.Flags().GetString("id")
 
 	deleteUrl := baseAddress + "/service/rest/v1/assets/" + idToDelete
 	req, err := http.NewRequest("DELETE", deleteUrl, nil)
 	if err != nil {
-		fmt.Println("Erreur lors de la création de la requête:", err)
+		log.Fatalln("Error during query creation:", err)
 		return
 	}
 	req.Header.Set("Authorization", basicToken)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Erreur lors de l'exécution de la requête:", err)
+		log.Fatalln("Error during query execution:", err)
 		return
 	}
 	defer resp.Body.Close()
 	switch resp.StatusCode {
 	case http.StatusNoContent:
-		fmt.Printf("Package id : %s deleted !\n", idToDelete)
+		log.Fatalf("Package id : %s deleted !\n", idToDelete)
 
 	}
 }

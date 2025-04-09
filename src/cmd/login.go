@@ -1,16 +1,16 @@
 /*
-Copyright © 2025 Julien Creach julien.creach@pm.me
+Copyright © 2025 Julien Creach github.com/jcreach
 */
 package cmd
 
 import (
 	"encoding/base64"
-	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/jcreach/Leon/model"
+	"github.com/jcreach/Leon/util"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // loginCmd represents the login command
@@ -45,49 +45,59 @@ func init() {
 }
 
 func Login(cmd *cobra.Command, args []string) {
-
 	username, _ := cmd.Flags().GetString("username")
 	password, _ := cmd.Flags().GetString("password")
 	baseAddress, _ := cmd.Flags().GetString("address")
 	repositoryName, _ := cmd.Flags().GetString("repository")
 
 	encodedBasicToken := base64.StdEncoding.EncodeToString([]byte(username + ":" + password))
+	basicToken := "Basic " + encodedBasicToken
 
+	isLoginValid := checkCredentialsValidity(baseAddress, basicToken)
+	if isLoginValid {
+		// store new repository
+		newRepository := model.Repository{
+			Name:        repositoryName,
+			BaseAddress: baseAddress,
+			BasicToken:  basicToken,
+		}
+
+		util.AddOrUpdateRepository(newRepository)
+	}
+}
+
+func checkCredentialsValidity(baseAddress string, basicToken string) bool {
 	statusUrl := baseAddress + "/service/rest/v1/status"
-
 	req, err := http.NewRequest("GET", statusUrl, nil)
 	if err != nil {
-		fmt.Println("Erreur lors de la création de la requête:", err)
-		return
+		log.Fatalln("Error during query creation:", err)
+		return false
 	}
-
-	basicToken := "Basic " + encodedBasicToken
 	req.Header.Set("Authorization", basicToken)
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Erreur lors de l'exécution de la requête:", err)
-		return
+		log.Fatalln("Error during query execution:", err)
+		return false
 	}
 	defer resp.Body.Close()
 
 	switch resp.StatusCode {
 	case http.StatusOK:
 		{
-			viper.Set("basictoken", basicToken)
-			viper.Set("baseaddress", baseAddress)
-			viper.Set("repository", repositoryName)
-
-			err := viper.WriteConfig()
-			if err != nil {
-				log.Fatalf("Erreur lors de l'écriture du fichier de configuration : %v\n", err)
-			}
-			fmt.Println("Logged in successfully!")
+			log.Println("Logged in successfully!")
+			return true
 		}
 	case http.StatusUnauthorized:
-		fmt.Println("Logged denied! Please check your credetials!")
+		{
+			log.Fatalln("Logged denied! Please check your credetials!")
+			return false
+		}
 	default:
-		fmt.Println("An error as occured!")
+		{
+			log.Fatalln("An error as occured!")
+			return false
+		}
 	}
 }
