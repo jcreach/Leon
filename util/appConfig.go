@@ -19,6 +19,7 @@ var ActiveRepository model.Repository
 func AddOrUpdateRepository(repository model.Repository) {
 	index := doesRepositoryAlreadyExist(repository.Name)
 
+	unloadPreviousActiveRepository()
 	if index > -1 {
 		appConfig.Repositories[index] = repository
 	} else {
@@ -157,6 +158,12 @@ func loadActiveRepository() {
 			ActiveRepository = repository
 			return
 		}
+	}
+}
+
+func unloadPreviousActiveRepository() {
+	for i := range appConfig.Repositories {
+		appConfig.Repositories[i].Active = false
 	}
 }
 

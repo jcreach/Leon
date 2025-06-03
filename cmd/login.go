@@ -58,6 +58,7 @@ func Login(cmd *cobra.Command, args []string) {
 		// store new repository
 		newRepository := model.Repository{
 			Name:        repositoryName,
+			Active:      true,
 			BaseAddress: baseAddress,
 			BasicToken:  basicToken,
 		}
